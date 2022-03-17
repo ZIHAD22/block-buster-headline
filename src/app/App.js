@@ -9,6 +9,11 @@ import axios from 'axios'
 class App extends Component {
   state = {
     news: [],
+    category: newsCatagories.technology,
+  }
+  changeCategory = (newCategory) => {
+    this.setState({ category: newCategory })
+    console.log(this.state.category)
   }
   async componentDidMount() {
     const url = `${process.env.REACT_APP_NEWS_URL}?apikey=${process.env.REACT_APP_API_KEY}&q=technology`
@@ -22,7 +27,10 @@ class App extends Component {
       <div className="container">
         <div className="row">
           <div className="col-sm-6 offset-md-3">
-            <Header category={newsCatagories.technology} />
+            <Header
+              category={this.state.category}
+              changeCategory={this.changeCategory}
+            />
             <div className="d-flex">
               <p className="text-black-50">About {0} Result Found</p>
               <p className="text-black-50 ms-auto">

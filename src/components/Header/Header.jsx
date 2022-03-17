@@ -32,12 +32,16 @@ class Header extends Component {
               return (
                 <button
                   key={newsCatagories[item]}
+                  onClick={() =>
+                    this.props.changeCategory(newsCatagories[item])
+                  }
                   className="btn btn-sm btn-warning ms-2 mb-2"
                 >{`#${newsCatagories[item]}`}</button>
               );
             }
             return (
               <button
+                onClick={() => this.props.changeCategory(newsCatagories[item])}
                 key={newsCatagories[item]}
                 className="btn btn-sm btn-light ms-2 mb-2"
               >
