@@ -1,7 +1,7 @@
 import React from "react";
 
 const getDateString = (dataTimeString) => {
-  return new Date(dataTimeString).toDateString;
+  return new Date(dataTimeString).toDateString();
 };
 
 const NewsItem = ({ item }) => {

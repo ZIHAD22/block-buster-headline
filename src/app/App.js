@@ -4,36 +4,24 @@ import Header from '../components/Header/Header'
 import './App.css'
 import Pagination from '../components/Pagination/Pagination'
 import NewsList from '../components/NewsList/NewsList'
-
-const fakeNews = [
-  {
-    title: 'Title1',
-    content: 'Content',
-    url: 'https://linktonew.com',
-    urlToImage: 'https://lonktoimage.com',
-    publishedAt: 'Published date and time',
-    source: {
-      name: 'CNN',
-    },
-  },
-  {
-    title: 'Title2',
-    content: 'Content',
-    url: 'https://linktonew.com',
-    urlToImage: 'https://lonktoimage.com',
-    publishedAt: 'Published date and time',
-    source: {
-      name: 'CNN',
-    },
-  },
-]
+import axios from 'axios'
 
 class App extends Component {
+  state = {
+    news: [],
+  }
+  async componentDidMount() {
+    const url = `${process.env.REACT_APP_NEWS_URL}?apikey=${process.env.REACT_APP_API_KEY}&q=technology`
+    console.log(url)
+    const data = await axios.get(url)
+    this.setState({ news: data.data.articles })
+    console.log(this.state.news)
+  }
   render() {
     return (
       <div className="container">
         <div className="row">
-          <div className="col-sm-6 offset-md-4">
+          <div className="col-sm-6 offset-md-3">
             <Header category={newsCatagories.technology} />
             <div className="d-flex">
               <p className="text-black-50">About {0} Result Found</p>
@@ -41,7 +29,7 @@ class App extends Component {
                 {1} page of {100}
               </p>
             </div>
-            <NewsList news={fakeNews} />
+            <NewsList news={this.state.news} />
             <Pagination />
           </div>
         </div>

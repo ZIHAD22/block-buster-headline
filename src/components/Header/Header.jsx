@@ -31,13 +31,16 @@ class Header extends Component {
             if (category === newsCatagories[item]) {
               return (
                 <button
-                  key={item}
+                  key={newsCatagories[item]}
                   className="btn btn-sm btn-warning ms-2 mb-2"
                 >{`#${newsCatagories[item]}`}</button>
               );
             }
             return (
-              <button className="btn btn-sm btn-light ms-2 mb-2">
+              <button
+                key={newsCatagories[item]}
+                className="btn btn-sm btn-light ms-2 mb-2"
+              >
                 {`#${newsCatagories[item]}`}{" "}
               </button>
             );
