@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { newsCatagories } from '../news'
+import News, { newsCatagories } from '../news'
 import Header from '../components/Header/Header'
 import './App.css'
 import Pagination from '../components/Pagination/Pagination'
@@ -15,12 +15,14 @@ class App extends Component {
     this.setState({ category: newCategory })
     console.log(this.state.category)
   }
-  async componentDidMount() {
-    const url = `${process.env.REACT_APP_NEWS_URL}?apikey=${process.env.REACT_APP_API_KEY}&q=technology`
-    console.log(url)
-    const data = await axios.get(url)
-    this.setState({ news: data.data.articles })
-    console.log(this.state.news)
+  componentDidMount() {
+    // const url = `${process.env.REACT_APP_NEWS_URL}?apikey=${process.env.REACT_APP_API_KEY}&category=technology`
+    // console.log(url)
+    // const data = await axios.get(url)
+    // this.setState({ news: data.data.articles })
+    // console.log(this.state.news)]
+    const news = new News()
+    news.getNews(this.state.category)
   }
   render() {
     return (
