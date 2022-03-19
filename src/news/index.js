@@ -14,39 +14,83 @@ const MAX_ITEM_PER_PAGE = 10
 
 export default class News {
   constructor(query) {
-    this._query = query
-    this._searchTerm = ''
+    this._searchTerm = query
     this._pageSize = MAX_ITEM_PER_PAGE
-    this._currentPAge = 0
-    this.totalPage = 0
+    this._currentPage = 1
+    this.totalPage = 1
   }
 
   async getNews() {
     try {
       const { data } = await axios.get(this._getUrl())
-      console.log(data)
+      this._totalPage = Math.ceil(data.totalResults / this._pageSize)
+      console.log(data.totalResults)
+      console.log(this._totalPage)
+      return {
+        article: data.articles,
+        isNext: this._isNext(),
+        isPrevious: this._isPrevious(),
+        totalPage: this._totalPage,
+        currentPage: this._currentPage,
+        category: this._searchTerm,
+        totalResults: data.totalResults,
+      }
     } catch (e) {
       throw new Error(e)
     }
   }
 
-  next() {}
+  next() {
+    if (this._isNext()) {
+      this._currentPage++
+      return this.getNews()
+    }
 
-  prev() {}
+    return false
+  }
 
-  setCurrentPage() {}
+  prev() {
+    if (this._isPrevious()) {
+      this._currentPage--
+      return this.getNews()
+    }
+  }
 
-  changeCategory() {}
+  setCurrentPage(pageNumber) {
+    if (pageNumber < 1 && pageNumber > this._totalPage) {
+      throw new Error('Invalid Page Number')
+    }
 
-  search() {}
+    this._currentPage = pageNumber
+    return this.getNews()
+  }
+
+  changeCategory(category) {
+    this._searchTerm = category
+    this._currentPage = 1
+    return this.getNews()
+  }
+
+  search(term) {
+    this._searchTerm = term
+    console.log(term)
+    return this.getNews()
+  }
 
   _getUrl() {
-    let url = '/?'
-    if (this._query) url += `category=${this._query}`
-    if (this._searchTerm) url += `&q=${this._searchTerm}`
+    let url = '/?language=en&'
+    if (this._searchTerm) url += `q=${this._searchTerm}`
     if (this._pageSize) url += `&pageSize=${this._pageSize}`
-    if (this._currentPAge) url += `&page=${this._currentPAge}`
+    if (this._currentPage) url += `&page=${this._currentPage}`
 
     return url
+  }
+
+  _isNext() {
+    return this._currentPage < this._totalPage
+  }
+
+  _isPrevious() {
+    return this._currentPage > 1
   }
 }

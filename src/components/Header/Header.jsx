@@ -8,8 +8,8 @@ class Header extends Component {
   handleChange = (e) => {
     this.setState({ searchTram: e.target.value });
   };
-  handleOnKeyPress = () => {
-    //   TODO: Later
+  handleOnKeyPress = (e) => {
+    e.key === "Enter" && this.props.search(this.state.searchTram);
   };
   render() {
     const { category } = this.props;

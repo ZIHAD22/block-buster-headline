@@ -1,46 +1,151 @@
 import React, { Component } from 'react'
 import News, { newsCatagories } from '../news'
 import Header from '../components/Header/Header'
-import './App.css'
 import Pagination from '../components/Pagination/Pagination'
 import NewsList from '../components/NewsList/NewsList'
-import axios from 'axios'
+import Loading from '../components/Loading/Loading'
 
+const news = new News(newsCatagories.technology)
 class App extends Component {
   state = {
-    news: [],
-    category: newsCatagories.technology,
-  }
-  changeCategory = (newCategory) => {
-    this.setState({ category: newCategory })
-    console.log(this.state.category)
+    data: {},
+    isLoading: true,
   }
   componentDidMount() {
-    // const url = `${process.env.REACT_APP_NEWS_URL}?apikey=${process.env.REACT_APP_API_KEY}&category=technology`
-    // console.log(url)
-    // const data = await axios.get(url)
-    // this.setState({ news: data.data.articles })
-    // console.log(this.state.news)]
-    const news = new News()
-    news.getNews(this.state.category)
+    news
+      .getNews()
+      .then((data) => {
+        this.setState({ data, isLoading: false })
+      })
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
   }
+
+  next = () => {
+    if (this.state.data.isNext) {
+      this.setState({ isLoading: true })
+    }
+    news
+      .next()
+      .then((data) => {
+        this.setState({ data, isLoading: false })
+      })
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
+  }
+  prev = () => {
+    if (this.state.data.isPrevious) {
+      this.setState({ isLoading: true })
+    }
+    news
+      .prev()
+      .then((data) => {
+        this.setState({ data, isLoading: false })
+      })
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
+  }
+
+  handlePageChange = (value) => {
+    this.setState({
+      data: {
+        ...this.state.data,
+        currentPage: value,
+      },
+    })
+  }
+
+  goToPage = () => {
+    this.setState({ isLoading: true })
+    news
+      .setCurrentPage(this.state.data.currentPage)
+      .then((data) => this.setState({ data, isLoading: false }))
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
+  }
+  changeCategory = (category) => {
+    this.setState({ isLoading: true })
+    news
+      .changeCategory(category)
+      .then((data) => this.setState({ data, isLoading: false }))
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
+  }
+
+  search = (searchTerm) => {
+    this.setState({ isLoading: true })
+    news
+      .search(searchTerm)
+      .then((data) => this.setState({ data, isLoading: false }))
+      .catch((e) => {
+        console.log(e)
+        alert('something went wrong')
+        this.setState({ isLoading: false })
+      })
+  }
+
   render() {
+    const {
+      article,
+      isPrevious,
+      isNext,
+      category,
+      totalResults,
+      currentPage,
+      totalPage,
+    } = this.state.data
+    console.log(category)
     return (
       <div className="container">
         <div className="row">
           <div className="col-sm-6 offset-md-3">
             <Header
-              category={this.state.category}
+              category={category}
               changeCategory={this.changeCategory}
+              search={this.search}
             />
-            <div className="d-flex">
-              <p className="text-black-50">About {0} Result Found</p>
-              <p className="text-black-50 ms-auto">
-                {1} page of {100}
-              </p>
-            </div>
-            <NewsList news={this.state.news} />
-            <Pagination />
+            {this.state.isLoading || (
+              <div className="d-flex">
+                <p className="text-black-50">
+                  About {totalResults} Result Found
+                </p>
+                <p className="text-black-50 ms-auto">
+                  {currentPage} page of {totalPage}
+                </p>
+              </div>
+            )}
+            {this.state.isLoading ? (
+              <Loading />
+            ) : (
+              <div>
+                <NewsList news={article} />
+                <Pagination
+                  next={this.next}
+                  prev={this.prev}
+                  isPrevious={isPrevious}
+                  isNext={isNext}
+                  totalPage={totalPage}
+                  currentPage={currentPage}
+                  handlePageChange={this.handlePageChange}
+                  goToPage={this.goToPage}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
