@@ -1,7 +1,4 @@
 import React, { Component } from "react";
-import News from "../../news";
-
-const news = new News();
 
 class Pagination extends Component {
   state = {
